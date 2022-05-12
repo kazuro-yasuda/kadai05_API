@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>フェラーリ・Club458</title>
+    <!-- URL DLしていれる！！ -->
+    <!-- reset.css ress -->
+    <!-- <link rel="stylesheet" href="https://unpkg.com/ress/dist/ress.min.css" /> -->
+    <!-- <link rel="stylesheet" href="reset.css" /> -->
+    <link rel="stylesheet" href="stylesheet05.css" />
+    <meta name="view port" conect="width=device-width,initial-scale=1.0" />
+    <!-- <link rel="stylesheet" href="responsive03.css" /> -->
+  </head>
+  <body>
+    <!--ヘッダー-->
+    <header>
+      <div class="header-wrapper">
+        <img class="f-logo" src="ferrari/fロゴ.png" alt="ヘッダーロゴ" />
+        <nav>
+          <ul class="header-lists">
+            <li class="header-list"><a href="#about">ABOUT</a></li>
+            <li class="header-list"><a href="#event">EVENT</a></li>
+            <li class="header-list"><a href="#news">NEWS</a></li>
+            <li class="header-list"><a href="#access">ACCESS</a></li>
+            <li class="header-list"><a href="#contact">CONTACT</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <!--メインビジュアル-->
+      <section id="main">
+        <div class="main-video">
+          <div class="movie">
+            <video
+              loop
+              muted
+              autoplay
+              playsinline
+              src="ferrari/video1.MP4"
+            ></video>
+          </div>
+          <div class="main-message">
+            <p class="main-p1">跳馬でセカイを馳せる</p>
+            <p class="main-p2">ようこそ「フェラーリ・Club458」へ！</p>
+          </div>
+        </div>
+      </section>
+
+      <!--Today's my drive Course-->
+      <section id="drive-corse-wrapper">
+        <h1 class="title-today">Today's Drive Course</h1>
+        <p class="sub-title-about">本日の気分は？</p>
+        <p>↓↓↓↓ コース選択ボタンで自動決定！ ↓↓↓↓</p>
+        <ul class="conrse-choice">
+          <li class="short-wrapper">
+            <p class="time">\ 約30分 /</p>
+            <button class="short-start">本日のショートコースは？</button>
+          </li>
+          <li class="long-wrapper">
+            <p class="time">\ 約1時間 /</p>
+            <button class="long-start">本日のロングコースは？</button>
+          </li>
+        </ul>
+        <p class="course-result"></p>
+
+        <div class="drive_memo_wrapper">ドライブ履歴</div>
+        <textarea
+          name="text_area"
+          id="text_area"
+          cols="30"
+          rows="10"
+        ></textarea>
+        <ul class="drive_memo">
+          <li id="save">Save</li>
+          <li id="clear">Clear</li>
+        </ul>
+      </section>
+
+      <!--ルート検索API-->
+      <section id="root_warraper">
+        <h1 class="root_tittle">ルート検索</h1>
+        <div id="printoutPanel"></div>
+        <div id="directionsInputContainer"></div>
+
+        <div id="myMap" style="width: 100%; height: 400px"></div>
+
+        <!-- jQuery-->
+        <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+
+        <!-- BingMapsAPI -->
+        <script
+          type="text/javascript"
+          src="https://www.bing.com/api/maps/mapcontrol?key=**************&callback=loadMapScenario"
+          async
+          defer
+        ></script>
+
+        <!-- javascript -->
+        <script>
+          //1．位置情報の取得に成功した時の処理
+          function mapsInit(position) {
+            //lat=緯度、lon=経度 を取得
+            const lat = position.coords.latitude;
+            const lon = position.coords.longitude;
+            // $("#map").html("緯度"+lat+",  "+"経度"+lon);
+            var map = new Microsoft.Maps.Map(document.getElementById("myMap"), {
+              /* No need to set credentials if already passed in URL */
+
+              center: new Microsoft.Maps.Location(lat, lon),
+              zoom: 15,
+            });
+            Microsoft.Maps.loadModule("Microsoft.Maps.Directions", function () {
+              var directionsManager =
+                new Microsoft.Maps.Directions.DirectionsManager(map);
+              directionsManager.setRenderOptions({
+                itineraryContainer: document.getElementById("printoutPanel"),
+              });
+              directionsManager.showInputPanel("directionsInputContainer");
+            });
+          }
+
+          //2． 位置情報の取得に失敗した場合の処理
+          function mapsError(error) {
+            let e = "";
+            if (error.code == 1) {
+              //1＝位置情報取得が許可されてない（ブラウザの設定）
+              e = "位置情報が許可されてません";
+            }
+            if (error.code == 2) {
+              //2＝現在地を特定できない
+              e = "現在位置を特定できません";
+            }
+            if (error.code == 3) {
+              //3＝位置情報を取得する前にタイムアウトになった場合
+              e = "位置情報を取得する前にタイムアウトになりました";
+            }
+            alert("エラー：" + e);
+          }
+
+          //3.位置情報取得オプション
+          const set = {
+            enableHighAccuracy: true, //より高精度な位置を求める
+            maximumAge: 20000, //最後の現在地情報取得が20秒以内であればその情報を再利用する設定
+            timeout: 10000, //10秒以内に現在地情報を取得できなければ、処理を終了
+          };
+          function loadMapScenario() {
+            //Main:位置情報を取得する処理 //getCurrentPosition :or: watchPosition
+            navigator.geolocation.getCurrentPosition(mapsInit, mapsError, set);
+          }
+        </script>
+      </section>
+
+      <!-- チャット欄 -->
+      <section id="chat">
+        <div class="chat-header">ツーリングの予定を立てよう！</div>
+        <div class="chat-name">
+          Driver's Name：<input type="text" id="uname" />
+        </div>
+        <div>
+          <textarea id="text" cols="30" rows="10"></textarea>
+          <button id="send">メッセージを送る</button>
+        </div>
+        <div id="output" style="overflow: auto; height: 200px"></div>
+      </section>
+
+      <!-- firebaseよりコピペ -->
+      <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.11/firebase-app.js";
+        import {
+          getDatabase,
+          ref,
+          push,
+          set,
+          onChildAdded,
+          remove,
+          onChildRemoved,
+        } from "https://www.gstatic.com/firebasejs/9.6.11/firebase-database.js";
+        // TODO: Add SDKs for Firebase products that you want to use
+        // https://firebase.google.com/docs/web/setup#available-libraries
+
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+          apiKey: "AIzaSyBv3gC8pWxXdSU3Qm4yaMOdKCJm2uiTmFM",
+          authDomain: "chat-cca9c.firebaseapp.com",
+          projectId: "chat-cca9c",
+          storageBucket: "chat-cca9c.appspot.com",
+          messagingSenderId: "61301148565",
+          appId: "1:61301148565:web:c221fa82e592aaed7c849c",
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig); //firebaseにアクセス
+        const db = getDatabase(app); //RealtimeDBに接続
+        const dbRef = ref(db, "chat"); //RealtimeDB内の"chat"を使う
+
+        //データ送信(Click)
+        $("#send").on("click", function () {
+          const msg = {
+            uname: $("#uname").val(),
+            text: $("#text").val(),
+          };
+          const newPostRef = push(dbRef); //ユニークKEY生成
+          set(newPostRef, msg); //"chat"にユニークKEYをつけてオブジェクトデータを登録
+
+          //入力欄を空にする
+          $("#uname").val("");
+          $("#text").val("");
+        });
+
+        //データ登録(Enter)
+        $("#text").on("keydown", function (e) {
+          console.log(e); //e変数の中身を確認！！
+          if (e.keyCode == 13) {
+            //EnterKey=13
+            const msg = {
+              uname: $("#uname").val(),
+              text: $("#text").val(),
+            };
+            const newPostRef = push(dbRef); //ユニークKEYを生成
+            set(newPostRef, msg); //"chat"にユニークKEYをつけてオブジェクトデータを登録
+
+            //入力欄を空にする
+            $("#uname").val("");
+            $("#text").val("");
+          }
+        });
+
+        //データ受信
+        onChildAdded(dbRef, function (data) {
+          const msg = data.val(); //オブジェクトデータを取得し、変数msgに代入
+          const key = data.key; //データのユニークキー（削除や更新に使用可能）
+          //表示用テキスト・HTMLを作成
+          let h = "<p>";
+          h += msg.uname;
+          h += "<br>";
+          h += msg.text;
+          h += "</p>";
+          $("#output").prepend(h); //上位置に挿入
+        });
+      </script>
+
+      <!--ABOUT-->
+      <section id="about">
+        <div class="about-wrapper">
+          <h1 class="title-about">About</h1>
+          <p class="sub-title-about">フェラーリ・Club458について</p>
+          <p class="text-about1">
+            フェラーリ・Club458は、458シリーズのオーナー限定のクラブです。
+          </p>
+          <p class="text-about2">
+            458シリーズの魅力に魅せられた者のみが集まる大人の社交場。
+            <br />自然吸気V8エンジン、ピニンファリーナデザイン最終系。
+          </p>
+          <p class="text-about3">流線美が生み出す芸術品</p>
+          <p class="text-about4">
+            最高速度325km <br />官能的エンジンサウンの世界を共に堪能しましょう
+          </p>
+
+          <div class="about-images">
+            <img src="ferrari/458-1.jpeg" alt="imageピザ" />
+            <img src="ferrari/458-2.jpeg" alt="image人" />
+            <img src="ferrari/458-3.jpeg" alt="image畑" />
+          </div>
+        </div>
+      </section>
+
+      <!--EVENT-->
+      <section id="event">
+        <div class="event-wrapper">
+          <h1 class="title-event">EVENT</h1>
+          <p class="text-event1">
+            所有歴の長いオーナーから、新しいオーナーまで
+            <br />楽しめるイベントを毎月実施！
+          </p>
+        </div>
+
+        <ul class="event-items">
+          <li>
+            <img
+              class="event-item-foto"
+              src="ferrari/ツーリング.png"
+              alt="ツーリング"
+            />
+          </li>
+
+          <li class="event-item-right">
+            <div class="event-item-right-coment">
+              <h2 class="right-coment">ツーリングイベント（３ヶ月に１度）</h2>
+              <p>
+                Club458では、関東近郊を中心に
+                <br />日帰りで楽しめるツーリング企画を実施。
+                <br />同伴者の参加ももちろんOK！
+                <br />ツーリング先では、ランチコースを堪能！
+                <br />帰路ももちろんツーリングを堪能しましょう。
+              </p>
+            </div>
+          </li>
+          <li class="event-item-left">
+            <div class="event-item-left-coment">
+              <h2 class="left-coment">Party イベント</h2>
+              <p>
+                クリスマスパーティーやGalaディナーなど
+                <br />季節ごとに会食イベントを開催。
+                <br />美味しい食事とお酒を満喫しながらのフェラーリ談義！
+                <br />ご家族・お子様も同伴の上、是非ご参加ください。
+              </p>
+            </div>
+          </li>
+
+          <li>
+            <img class="event-item-foto" src="ferrari/gala.webp" alt="ガラ" />
+          </li>
+
+          <li>
+            <img
+              class="event-item-foto"
+              src="ferrari/サーキット.jpeg"
+              alt="サーキット"
+            />
+          </li>
+
+          <li class="event-item-right">
+            <div class="event-item-right-coment">
+              <h2 class="right-coment">サーキットイベント</h2>
+              <p>
+                フェラーリのポテンシャルを実感する空間をご提供！
+                <br />愛車がもつ真の力を皆様に感じていただきます。
+                <br />年に１度、サーキットを貸し切り、安心確保のもと
+                <br />公道では味わうことができないフェラーリの本気を知っていただきます。
+                <br />是非、愛馬をサーキットで唸らせてあげてください
+              </p>
+            </div>
+          </li>
+        </ul>
+      </section>
+
+      <!--NEWS-->
+      <section id="news">
+        <div class="news-wrapper">
+          <h1 class="title-news">NEWS</h1>
+          <p class="text-news">過去のイベントニュース</p>
+        </div>
+        <div class="news-lists">
+          <ul class="news-list">
+            <li class="news-item">
+              <img class="news-item-img" src="ferrari/鈴鹿.JPG" alt="鈴鹿" />
+              <p class="news-date">2021/4/18</p>
+              <p>
+                鈴鹿サーキットでサーキットイベントを開催しました！
+                <br />100台の458シリーズが集結しました！
+                <br />軽食を堪能しつつ、同乗OKのファミリー走行を開催しました。
+              </p>
+            </li>
+
+            <li class="news-item">
+              <img
+                class="news-item-img"
+                src="ferrari/鎌倉プリンス.jpeg"
+                alt="鎌倉"
+              />
+              <p class="news-date">2021/7/7</p>
+              <p>
+                ツーリングイベント「鎌倉」を開催しました！
+                <br />朝8時に大黒埠頭PAに30台が集合し、いざ鎌倉へ。
+                <br />鎌倉プリンスホテルでランチパーティーをしました。
+              </p>
+            </li>
+
+            <li class="news-item">
+              <img class="news-item-img" src="ferrari/温泉.jpeg" alt="温泉" />
+              <p class="news-date">2021/9/18</p>
+              <p>
+                バースディツーリングを開催しました！
+                <br />クラブ理事の誕生日を記念し、有志15人で御殿場へ。
+                <br />強羅花壇にて温泉と食事を楽しんできました。
+              </p>
+            </li>
+          </ul>
+        </div>
+
+        <div class="button-more">
+          <button href="#">More</button>
+        </div>
+      </section>
+
+      <!--ACCESS-->
+      <section id="access">
+        <div class="course-wrapper">
+          <h1 class="title-access">Access</h1>
+          <p class="text-access1">クラブ情報</p>
+
+          <div class="map">
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3241.3113002289497!2d139.70080821553057!3d35.66933613823122!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x60188c9fa9e2e881%3A0x35396adb5ba7ce03!2z44K444O844K644Ki44Kr44OH44Of44O85p2x5Lqs!5e0!3m2!1sja!2sjp!4v1647996060644!5m2!1sja!2sjp"
+              width="1366"
+              height="600"
+              style="border: 0"
+              allowfullscreen=""
+              loading="lazy"
+            ></iframe>
+          </div>
+
+          <ul class="access-info-wrapper">
+            <li class="access-infomations">
+              <div class="access-info">
+                <p class="text-access2">クラブ名</p>
+                <p class="text-access3">事務所所在地</p>
+                <p class="text-access3">TEL</p>
+                <p class="text-access3">FAX</p>
+                <p class="text-access4">MAIL</p>
+              </div>
+            </li>
+            <li class="access-infomations">
+              <div class="access-info">
+                <p class="text-access2">Ferrai Club458</p>
+                <p class="text-access3">
+                  〒107-0061東京都港区北青山3-5-6 青朋ビル2F
+                </p>
+                <p class="text-access3">03-5413-5045</p>
+                <p class="text-access3">03-5413-5046</p>
+                <p class="text-access4">dummy@ferriclub458.tokyo</p>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <!--CONTACT-->
+      <section id="contact">
+        <div class="contact-wrapper">
+          <h1 class="title-contact">Contact</h1>
+          <p class="text-contact1">入会お申し込み・詳細お問い合わせ</p>
+
+          <p class="text-contact2">
+            年会費や年間予定イベントはお問い合わせくださいませ。
+            <br />皆様の入会をお待ちしております！
+          </p>
+
+          <p class="text-contact3">
+            ※Ferrari Club458は実際には存在しません。
+            <br />間違っても問い合わせしないようお願いいたします。
+          </p>
+
+          <form action="#" method="POST">
+            <dl class="form-inner">
+              <dt class="form-title1">名前</dt>
+              <dd class="form-item1">
+                <input
+                  type="text"
+                  name="name"
+                  id="name"
+                  placeholder="（例）安田　和朗"
+                />
+              </dd>
+              <dt class="form-title1">カナ</dt>
+              <dd class="form-item1">
+                <input
+                  type="text"
+                  name="namekana"
+                  id="namekana"
+                  placeholder="（例）ヤスダ　カズロウ"
+                />
+              </dd>
+              <dt class="form-title1">メールアドレス</dt>
+              <dd class="form-item1">
+                <input
+                  type="email"
+                  name="email"
+                  id="email"
+                  placeholder="（例）yasuda@yasuda.com"
+                />
+              </dd>
+              <dt class="form-title2 form-title2-1">
+                Ferrari Club458を<br />知ったきっかけ
+              </dt>
+              <dd class="form-item2">
+                <select name="reason1" id="reason1">
+                  <option value="選択してください">--選択してください--</option>
+                  <option value="google検索">google検索</option>
+                  <option value="SNS">SNS</option>
+                  <option value="紹介">紹介</option>
+                  <option value="会員の知人がいる">会員の知人がいる</option>
+                  <option value="その他">その他</option>
+                </select>
+              </dd>
+              <dt class="form-title2">入会動機</dt>
+              <dd class="form-item2">
+                <ul class="reason2">
+                  <li class="reason2-item">
+                    <label for="founder"
+                      ><input
+                        type="radio"
+                        name="kind"
+                        id="founder"
+                        value="ツーリングイベントに興味がある"
+                      />ツーリングイベントに興味がある</label
+                    >
+                  </li>
+                  <li class="reason2-item">
+                    <label for="job"
+                      ><input
+                        type="radio"
+                        name="kind"
+                        id="job"
+                        value="サーキット走行をしたい"
+                      />サーキット走行をしたい</label
+                    >
+                  </li>
+                  <li class="reason2-item">
+                    <label for="cheese"
+                      ><input
+                        type="radio"
+                        name="kind"
+                        id="cheese"
+                        value="会食イベントで交流したい"
+                      />会食イベントで交流したい</label
+                    >
+                  </li>
+                  <li class="reason2-item">
+                    <label for="culture"
+                      ><input
+                        type="radio"
+                        name="kind"
+                        id="culture"
+                        value="458シリーズ仲間を作りたい"
+                      />458シリーズ仲間を作りたい</label
+                    >
+                  </li>
+                </ul>
+              </dd>
+              <dt class="form-title2">詳細・質問など</dt>
+              <dd class="form-item2">
+                <textarea
+                  name="detail"
+                  id="detail"
+                  cols="30"
+                  rows="10"
+                ></textarea>
+              </dd>
+            </dl>
+          </form>
+          <div class="btn-submit-wraper">
+            <input type="submit" value="送信" class="button-submit" />
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <small class="copyrights"
+        >2022 Ferrari Club458 All Rights Reserved.</small
+      >
+    </footer>
+
+    <!-- jquery読み込み -->
+    <script
+      src="https://code.jquery.com/jquery-3.6.0.min.js"
+      integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+      crossorigin="anonymous"
+    ></script>
+
+    <script src="js05.js"></script>
+  </body>
+</html>
